@@ -1,0 +1,7 @@
+services:
+  wordcraft-web:
+    image: ghcr.io/mikapst/wordcraft-web:latest
+    container_name: wordcraft-web
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
