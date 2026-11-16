@@ -1,80 +1,71 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/storytold/wordcraft/main/assets/app-icon/hicolor/256x256/apps/ai.storyteller.wordcraft.png" width="128" height="128" alt="WordCraft icon">
+  <img src="https://raw.githubusercontent.com/storytold/wordcraft/main/assets/app-icon/hicolor/256x256/apps/ai.storyteller.wordcraft.png" width="128" height="128" alt="WordCraft application icon">
 </p>
 
 <h1 align="center">WordCraft Web — Docker Image</h1>
 <p align="center">
-  A self-hosted browser build of WordCraft, an open-source word processor written in Rust.
+  A community-maintained Docker image for
+  <a href="https://github.com/storytold/wordcraft">WordCraft</a>,
+  bringing its browser-based word processor to a self-hosted web interface.
   <br>
-  Packaged as a static web application and published to GitHub Container Registry.
+  Automated official-release builds and publication to GitHub Container Registry (GHCR).
 </p>
+
 <p align="center">
-  <a href="https://github.com/MikaPST/wordcraft-web/actions/workflows/publish-image.yml">
-    <img src="https://github.com/MikaPST/wordcraft-web/actions/workflows/publish-image.yml/badge.svg" alt="Build and publish WordCraft Web">
-  </a>
-  <a href="https://github.com/MikaPST/wordcraft-web/releases/latest">
-    <img src="https://img.shields.io/github/v/release/MikaPST/wordcraft-web?label=Release&logo=github&color=blue" alt="Latest Release">
-  </a>
-  <a href="https://github.com/MikaPST/wordcraft-web/pkgs/container/wordcraft-web">
-    <img src="https://ghcr-badge.egpl.dev/mikapst/wordcraft-web/latest_tag?trim=major&label=GHCR" alt="GHCR image tag">
-  </a>
-  <a href="docker-compose.yml">
-    <img src="https://img.shields.io/badge/Docker%20Compose-ready-2496ED?logo=docker&logoColor=white" alt="Docker Compose configuration">
-  </a>
+  <a href="https://github.com/MikaPST/wordcraft-web/actions/workflows/publish-image.yml"><img src="https://github.com/MikaPST/wordcraft-web/actions/workflows/publish-image.yml/badge.svg" alt="Build and publish WordCraft Web"></a>
+  <a href="https://github.com/MikaPST/wordcraft-web/releases/latest"><img src="https://img.shields.io/github/v/release/MikaPST/wordcraft-web?label=Release&logo=github&color=blue" alt="Latest Release"></a>
+  <a href="https://github.com/MikaPST/wordcraft-web/pkgs/container/wordcraft-web"><img src="https://ghcr-badge.egpl.dev/mikapst/wordcraft-web/latest_tag?trim=major&label=GHCR" alt="GHCR image tag"></a>
+  <a href="docker-compose.yml"><img src="https://img.shields.io/badge/Docker%20Compose-ready-2496ED?logo=docker&logoColor=white" alt="Docker Compose configuration"></a>
 </p>
 
 ---
 
 ## Why this repository?
 
-This repository provides a Docker image for the official [WordCraft](https://github.com/storytold/wordcraft) web application.
+The official WordCraft project provides a WebAssembly-based word processor that can be hosted as a static website. This repository packages the browser application into a Docker image for convenient self-hosting.
 
-The goal is to make WordCraft easy to deploy on a self-hosted server such as Unraid, without having to build the application manually.
+The goals are to:
 
-- Publish a matching GitHub Release only after the Docker build and push succeed.
-- Build the web application directly from the official upstream repository.
-- Automatically publish the resulting Docker image to GitHub Container Registry (GHCR).
-- Rebuild periodically to follow upstream changes.
-- Provide a simple Docker Compose configuration.
-- Make the image suitable for Unraid and other Docker environments.
-- Keep the Docker packaging separate from the upstream application.
+- Build the official WordCraft web application from the exact upstream release tag.
+- Publish ready-to-run Docker images to GHCR for both AMD64 and ARM64.
+- Check for new official releases daily and publish corresponding versioned images.
+- Create a matching GitHub Release **only after** the Docker image has been published.
+- Offer a simple Docker Compose configuration and support Unraid deployments.
+- Maintain Docker, NGINX and workflow configuration independently of upstream.
+- Preserve upstream license, attribution and font-license notices in the image.
 
-This repository is a packaging project only. It is not a fork of WordCraft and does not modify the upstream source code.
+This is a packaging and distribution project, **not** a fork intended to develop a separate word processor.
 
 ## How it works
 
-WordCraft is an open-source word processor written in Rust. Its web version runs in a modern browser through WebAssembly and uses an `eframe`/`wgpu` interface, with WebGPU and a WebGL2 fallback.
+WordCraft Web runs inside the browser using Rust, WebAssembly and an `eframe`/`wgpu` interface. It prefers WebGPU and automatically falls back to WebGL2. The Docker container serves the compiled static files through NGINX; it is not a remote desktop or a server-side document processor.
 
-WordCraft provides a familiar word-processing workflow with a ribbon interface, styles, tables, page layout, references, review tools and document formatting. The upstream application reads and writes DOCX, and also supports formats such as ODT, RTF, HTML, Markdown, LaTeX and TXT. PDF export is also available in the application. WordCraft is currently in alpha, and document fidelity and feature depth are still evolving.
+- **Browser-based editing:** use the familiar ribbon interface for text, paragraphs, styles, lists, tables and page layout.
+- **Document formats:** open and save DOCX, with support for ODT, RTF, HTML, Markdown, LaTeX and TXT, and export to PDF.
+- **Review and references:** comments, tracked changes, citations, footnotes and tables of contents are provided by the upstream app, subject to its current alpha limitations.
+- **Local file handling:** opening documents uses the browser file picker; saving and exporting normally use browser downloads.
+- **No server-side document storage:** no WordCraft account, document database, mounted volume or remote desktop is included.
+- **Embedding:** the upstream web application supports iframe hosting, a same-origin parent bridge and a canvas host API; consult the official hosting guide for its security and integration contracts.
 
-The Docker image:
-
-- Serves the prebuilt WordCraft web application as static files using NGINX.
-- Does not run a desktop session or remote desktop.
-- Does not add a server-side document-processing engine.
-- Does not provide server-side user accounts or centralized document storage.
-
-Documents are opened through the browser and saved/exported through browser downloads. Preferences are stored in the browser's local storage; they are not persisted in a Docker volume. The container itself does not store users' documents.
+WordCraft is still in **alpha**. Complex DOCX fidelity and advanced feature coverage are evolving; keep backups of important documents. Browser preferences are kept in local storage, not in the Docker container.
 
 ## Docker image
 
-The image is published on GitHub Container Registry:
+The image is published to GitHub Container Registry:
 
 ```text
 ghcr.io/mikapst/wordcraft-web:latest
 ```
 
-Each official upstream release is also published under its exact version tag, for example:
+Each official upstream release is also published under its original version tag, for example:
 
 ```text
-ghcr.io/mikapst/wordcraft-web:vX.Y.Z
+ghcr.io/mikapst/wordcraft-web:v0.15.1
 ```
-
-Use a versioned tag if you want to keep a deployment on a specific release. The `latest` tag updates when an image is published.
 
 ### Option 1 — Docker Compose (recommended)
 
-Create a `docker-compose.yml` file:
+A `docker-compose.yml` file is included at the repository root:
 
 ```yaml
 services:
@@ -86,52 +77,35 @@ services:
     restart: unless-stopped
 ```
 
-Start the container:
+Start the application:
 
 ```bash
 docker compose up -d
 ```
 
-Open WordCraft in your browser:
-
-```text
-http://YOUR_SERVER_IP:8080
-```
+Open `http://YOUR_SERVER_IP:8080` (or `http://localhost:8080` when Docker runs on your own computer).
 
 #### Useful Compose commands
 
-View container logs:
-
 ```bash
+# Follow application logs
 docker compose logs -f
-```
 
-Update the image:
-
-```bash
+# Update to the newest published image
 docker compose pull
 docker compose up -d
-```
 
-Stop and remove the container:
-
-```bash
+# Stop and remove the container
 docker compose down
 ```
 
-The container listens on port `8080`. No volume or environment variable is required by this static web image.
+No `.env` file or persistent volume is required. To change the host port, modify the left side of the mapping, for example `8081:8080`.
 
 ### Option 2 — Run directly with Docker
 
-Pull the image:
-
 ```bash
 docker pull ghcr.io/mikapst/wordcraft-web:latest
-```
 
-Run the container:
-
-```bash
 docker run -d \
   --name wordcraft-web \
   --restart unless-stopped \
@@ -139,99 +113,129 @@ docker run -d \
   ghcr.io/mikapst/wordcraft-web:latest
 ```
 
-Then open:
-
-```text
-http://YOUR_SERVER_IP:8080
-```
+Open `http://YOUR_SERVER_IP:8080`. Optional CPU and memory limits may be configured with Docker if required.
 
 ### Network access and reverse proxies
 
-The container exposes an HTTP service on port `8080`.
+The container listens on HTTP port `8080`. Use a reverse proxy such as Traefik for HTTPS and avoid exposing unencrypted HTTP directly to the public Internet.
 
-You can place it behind a reverse proxy such as Traefik or NGINX Proxy Manager to access it through a domain name and HTTPS.
+**WebGPU and clipboard access require a secure context**, normally HTTPS or localhost. On non-secure origins WordCraft can fall back to WebGL2. The app does not require cross-origin isolation headers such as COOP/COEP. Its iframe host bridge has additional same-origin and sandbox requirements; refer to upstream documentation before embedding it in another site.
 
-For public access, use HTTPS through a reverse proxy rather than exposing the unencrypted HTTP endpoint directly to the Internet.
+## Repository structure
 
-WordCraft uses browser graphics APIs. WebGPU and clipboard access require a secure context (HTTPS, or localhost); WebGL2 is used as a fallback when WebGPU is unavailable. The upstream application does not require `Cross-Origin-Opener-Policy` or `Cross-Origin-Embedder-Policy`.
+The repository versions its own Docker packaging and retrieves the official application source only during CI builds.
 
-The NGINX configuration serves WebAssembly files with the correct MIME type, enables gzip compression, disables caching for `index.html` and applies long-lived immutable caching to hashed JavaScript and WebAssembly assets.
+```text
+wordcraft-web/
+├── .github/
+│   └── workflows/
+│       └── publish-image.yml
+├── .dockerignore
+├── Dockerfile
+├── nginx.conf
+├── docker-compose.yml
+└── README.md
+```
+
+| File | Purpose |
+|---|---|
+| `Dockerfile` | Defines the unprivileged NGINX runtime image, OCI metadata and health check. |
+| `nginx.conf` | Serves WebAssembly, compressed assets, hashed-file caching, security headers and `/healthz`. |
+| `.dockerignore` | Restricts the image build context to the generated site, legal notices and configuration. |
+| `docker-compose.yml` | Defines the ready-to-use Compose deployment. |
+| `.github/workflows/publish-image.yml` | Detects upstream releases, builds WebAssembly, publishes multi-platform GHCR images and creates GitHub Releases. |
+| `README.md` | Documents deployment, architecture, automation and attribution. |
+
+### Docker build architecture
+
+WordCraft's official web build uses **Trunk**, not `cargo xtask web`. Its `apps/wordcraft-web/Trunk.toml` writes the built static site to `dist/web` at the upstream repository root, with relative URLs and content-hashed filenames.
+
+The build process follows these steps:
+
+1. GitHub Actions resolves the latest published official WordCraft release or a manually selected tag.
+2. It checks out that exact source tag in `upstream/` and checks out the revision of `craft-i18n` specified by `upstream/craft-i18n.rev`.
+3. It checks out the shared `craft-fonts` assets at the reference used by the upstream release workflow at the time this packaging was prepared.
+4. Rust, the `wasm32-unknown-unknown` target and Trunk are installed.
+5. `trunk build --release` compiles WordCraft in `upstream/apps/wordcraft-web`, with the shared fonts and language data available through `CRAFT_FONTS_DIR` and `CRAFT_I18N_DIR`.
+6. The workflow verifies `upstream/dist/web/index.html`, JavaScript and WebAssembly outputs, and copies them to a temporary `image-context/site/` folder.
+7. Version-controlled `Dockerfile`, `nginx.conf` and `.dockerignore` are copied from this repository, alongside upstream licenses and attribution files.
+8. Docker Buildx publishes a static NGINX image to GHCR for `linux/amd64` and `linux/arm64`.
+9. A matching GitHub Release is created or updated **only after** the image push succeeds.
+
+The WebAssembly application is compiled once and packaged into both container architectures. No server-side database, GPU passthrough, document storage volume or remote desktop is needed.
+
+The runtime exposes `/healthz`, uses the unprivileged `nginx` user and serves `.wasm` with the required MIME type. Hashed JS/WASM assets receive immutable caching; `index.html` is revalidated. NGINX supports precompressed `.gz` assets if the upstream build provides them.
+
+> [!NOTE]
+> Upstream Rust, Trunk, fonts, translation data or build-path changes may require adjustments. The archive has been statically checked; a successful GitHub Actions run is required to validate the complete upstream compilation and container publication.
 
 ## Automated builds
 
-GitHub Actions checks the official [WordCraft releases](https://github.com/storytold/wordcraft/releases), builds the WebAssembly application from the selected upstream tag and publishes the image to GHCR.
+GitHub Actions checks official WordCraft releases every day.
 
 | Trigger | Behaviour |
 |---|---|
-| Weekly schedule | Checks the latest official WordCraft release and builds it if it has not already been published here |
-| Manual workflow dispatch | Builds the latest official release, or a specified `upstream_tag` |
-| Force rebuild | Rebuilds an already published version with `force_rebuild: true` |
-| Changes to packaging files on `main` | Rebuilds the current official upstream release with the updated workflow |
+| Daily schedule | Checks the latest official release and builds it if it has not already been published here |
+| Manual workflow dispatch | Builds the latest release or the specified official upstream tag |
+| Force rebuild | Rebuilds an existing version and updates its image and GitHub Release |
+| Packaging changes on `main` | Rebuilds the latest official release when version-controlled packaging or documentation changes |
 
 ### Published tags
 
-- `latest` — the latest successfully published image (mutable tag).
-- `<upstream-version>` — the exact official upstream tag, for example `vX.Y.Z`.
-- `upstream-<commit>` — the upstream source commit used for the image (first 12 hexadecimal characters).
+Each successful build publishes:
 
-The image targets both `linux/amd64` and `linux/arm64`. The workflow checks out **the official upstream release tag**, rather than compiling `main` as the versioned source.
+- `latest` — most recently packaged official WordCraft release.
+- `<upstream-version>` — the exact official release tag, for example `v0.15.1`.
+- `upstream-<commit>` — the first 12 characters of the upstream source commit.
+
+Images are published for `linux/amd64` and `linux/arm64`.
 
 ### GitHub Releases
 
-After a successful Docker build and GHCR push, the workflow creates or updates a [GitHub Release](https://github.com/MikaPST/wordcraft-web/releases) matching the upstream tag. It includes the upstream release notes, source link and commit, Docker tags, supported architectures and (when available) the published image digest.
+After the Docker image is successfully pushed to GHCR, the workflow creates or updates a [GitHub Release](https://github.com/MikaPST/wordcraft-web/releases) matching the upstream version.
 
-The Release badge at the top of this README updates automatically. Scheduled runs skip versions already released here. You can force a rebuild from **Actions → Build and publish WordCraft Web → Run workflow**.
+Each release includes the official upstream release link and notes, source revision, Docker tags, supported architectures, image digest and the shared font/translation revisions used during the build.
+
+The **Release** badge at the top of this README displays the latest GitHub Release. Scheduled runs skip already published versions. To rebuild, open **Actions → Build and publish WordCraft Web → Run workflow** and enable `force_rebuild`.
 
 > [!IMPORTANT]
-> A GitHub Release is created only after the Docker image has been successfully published. The `latest` tag may change after a rebuild; pin a versioned image tag for a stable deployment. Auxiliary source repositories (for example `craft-fonts`) may be checked out separately and are not necessarily pinned to the upstream release commit.
+> A GitHub Release is created **only after** a successful GHCR image push. `latest` is mutable; forced rebuilds can also update versioned tags. Pin an image digest when exact reproducibility is required.
 
 ## Unraid Community Applications
 
-This image can be used with Unraid through Docker Compose or a Community Applications template.
+WordCraft Web is suitable for Unraid Docker deployments. The Community Applications template is maintained separately from this repository:
 
-The Unraid template is maintained separately in the [MikaPST/unraid-community-apps](https://github.com/MikaPST/unraid-community-apps) repository.
+- **Unraid Community Applications repository:** [MikaPST/unraid-community-apps](https://github.com/MikaPST/unraid-community-apps)
+- **WordCraft Web template:** [wordcraft-web.xml](https://github.com/MikaPST/unraid-community-apps/blob/main/templates/wordcraft-web.xml)
+- **Docker image:** `ghcr.io/mikapst/wordcraft-web:latest`
+- **Container port:** `8080`
 
-This repository contains the Docker image build and publication workflow; the Community Applications repository contains the Unraid-specific template.
-- **Template:** [wordcraft-web.xml](https://github.com/MikaPST/unraid-community-apps/blob/main/templates/wordcraft-web.xml)
+The Docker image does not store documents in Unraid `appdata`; document files are handled in the browser.
 
 ## Upstream project
 
-**WordCraft** is an open-source, clean-room reimplementation of a modern word processor, written in pure Rust.
+WordCraft is an open-source, clean-room word processor developed by the ArtCraft team and its contributors.
 
-Its features include:
-
-- DOCX document reading and writing.
-- Text and paragraph formatting, styles, themes and lists.
-- Tables, pictures, shapes, text boxes, headers and footers.
-- Page layout, columns, page numbers and watermarks.
-- References, table of contents, footnotes, citations and bibliography.
-- Spelling and grammar tools, comments and track changes.
-- Import and export for ODT, RTF, HTML, Markdown, LaTeX and TXT.
-- PDF export and page image rendering.
-
-The upstream project also provides native desktop applications, a command-line interface and MCP integrations. These are not included in this Docker image, which packages only the browser-based WebAssembly application.
-
-- **Source code:** [github.com/storytold/wordcraft](https://github.com/storytold/wordcraft)
+- **Source code:** [storytold/wordcraft](https://github.com/storytold/wordcraft)
 - **Official website:** [getartcraft.com/apps/wordcraft](https://getartcraft.com/apps/wordcraft)
-- **Releases:** [GitHub Releases](https://github.com/storytold/wordcraft/releases)
-- **Web hosting guide:** [Hosting WordCraft for the web](https://github.com/storytold/wordcraft/blob/main/packaging/web/README.md)
+- **Official web hosting guide:** [Hosting WordCraft for the web](https://github.com/storytold/wordcraft/blob/main/packaging/web/README.md)
+- **Official releases:** [WordCraft releases](https://github.com/storytold/wordcraft/releases)
 
-This repository packages the upstream web application for Docker. It does not modify the upstream application.
-
-The MikaPST GitHub Release tracks the upstream version but represents independent Docker packaging, not an official WordCraft distribution.
+This repository publishes independent Docker packaging built from the official upstream release, not an official WordCraft distribution.
 
 ## License and attribution
 
-WordCraft is dual-licensed under **MIT** or **Apache-2.0**, at your option. Copyright and required notices are maintained by the upstream project in its `NOTICE` file.
+WordCraft is dual-licensed under the **MIT License or Apache License 2.0**, at the user's option. Upstream copyright and attribution notices must be preserved.
 
-Bundled assets, fonts and language data may have their own licenses. Their authors, sources and licenses are documented by the upstream project in `ATTRIBUTION.md` and the relevant dependency repositories.
+- [Upstream MIT License](https://github.com/storytold/wordcraft/blob/main/LICENSE-MIT)
+- [Upstream Apache License 2.0](https://github.com/storytold/wordcraft/blob/main/LICENSE-APACHE)
+- [Upstream NOTICE](https://github.com/storytold/wordcraft/blob/main/NOTICE)
+- [Upstream asset attributions](https://github.com/storytold/wordcraft/blob/main/ATTRIBUTION.md)
 
-The WordCraft and ArtCraft names, logos and related brand assets are trademarks of the upstream project and are not covered by the software license.
+The workflow copies upstream license and attribution files, together with bundled font licenses, into the published runtime image. The upstream software licenses do not automatically determine the license of independently maintained packaging files; consult this repository's own license if present.
 
-The Docker packaging files in this repository are provided separately from the upstream application. Refer to the upstream repository for the complete license texts, notices and asset attributions.
+WordCraft, ArtCraft, their logos and trademarks remain the property of their respective owners. This project is community-maintained and is **not affiliated with or endorsed by** the official maintainers.
 
 ## Disclaimer
 
-This is an independent community packaging project and is not affiliated with, endorsed by, or supported by the ArtCraft team.
-
-All product names, trademarks and logos are the property of their respective owners.
+WordCraft is under active development. Features, browser compatibility, import/export fidelity and behavior may change between releases. Keep backups of important documents and test new versions before relying on them for critical work.
